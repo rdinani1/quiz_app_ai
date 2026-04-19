@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class TriviaService {
-  static const String _apiKey = 'qa_sk_2bfb3b86de010358d1771f0898e7de446a429c78';
+  static const String apiKey = 'YOUR_API_KEY';
 
   static Future<List<dynamic>> fetchQuestions() async {
     final url = Uri.parse(
@@ -11,17 +11,17 @@ class TriviaService {
 
     final response = await http.get(
       url,
-      headers: {
-        'Authorization': 'Bearer $_apiKey',
-      },
+      headers: {'Authorization': 'Bearer $apiKey'},
     );
 
     if (response.statusCode == 200) {
-      final data = json.decode(response.body);
+      final body = json.decode(response.body);
 
-      return data; // QuizAPI returns list directly
-    } else {
-      throw Exception('Failed to load questions');
+      if (body['success'] == true && body['data'] is List) {
+        return body['data'];
+      }
     }
+
+    throw Exception('Failed to load questions');
   }
 }
