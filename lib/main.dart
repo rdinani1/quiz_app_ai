@@ -10,58 +10,43 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: QuizTestScreen(),
-    );
+    return const MaterialApp(home: TestScreen());
   }
 }
 
-class QuizTestScreen extends StatefulWidget {
-  const QuizTestScreen({super.key});
+class TestScreen extends StatefulWidget {
+  const TestScreen({super.key});
 
   @override
-  State<QuizTestScreen> createState() => _QuizTestScreenState();
+  State<TestScreen> createState() => _TestScreenState();
 }
 
-class _QuizTestScreenState extends State<QuizTestScreen> {
+class _TestScreenState extends State<TestScreen> {
   List questions = [];
-  bool isLoading = true;
+  bool loading = true;
 
   @override
   void initState() {
     super.initState();
-    loadQuestions();
+    load();
   }
 
-  void loadQuestions() async {
-    try {
-      final data = await TriviaService.fetchQuestions();
-      setState(() {
-        questions = data;
-        isLoading = false;
-      });
-    } catch (e) {
-      print(e);
-    }
+  void load() async {
+    final data = await TriviaService.fetchQuestions();
+    setState(() {
+      questions = data;
+      loading = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
+    if (loading) return const CircularProgressIndicator();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Quiz API Test')),
       body: ListView.builder(
         itemCount: questions.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(questions[index]['question'] ?? 'No question'),
-          );
-        },
+        itemBuilder: (_, i) => Text(questions[i]['text']),
       ),
     );
   }
